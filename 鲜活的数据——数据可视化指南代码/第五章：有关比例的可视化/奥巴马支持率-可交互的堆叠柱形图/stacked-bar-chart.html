@@ -1,0 +1,84 @@
+<html>
+<head>
+	<title>Stacked Bar Chart</title>
+	<script type="text/javascript" src="protovis/protovis.js"></script>
+</head>
+<body>
+	<div id="figure-wrapper">
+		<div id="figure">
+			<script type="text/javascript+protovis">
+				var data_original = {
+					"Issue":["种族关系","教育","恐怖活动","能源政策","外交事务","环境","伊拉克局势",
+					"税收","医疗保健政策","经济","阿富汗局势","联邦预算赤字","外来移民"],
+					"Approve":[52,49,48,47,44,43,41,41,40,38,36,31,29],
+					"Disapprove":[38,40,45,42,48,51,53,54,57,59,57,64,62],
+					"None":[10,11,7,11,8,6,6,5,3,3,7,5,9]
+					};
+				
+				var cat = data_original.Issue;
+				var data = [data_original.Approve, data_original.Disapprove, data_original.None];
+				var w = 400,
+					h = 250,
+					x = pv.Scale.ordinal(cat).splitBanded(0,w,4/5),  //设定水平轴的标度，并指定图标宽度的4/5用于柱形，其他空间用于柱形间的间隔
+					y = pv.Scale.linear(0,100).range(0,h),  //垂直轴表现的是百分比，是一个0~100%的线性标尺
+					fill=["#809EAD","#B1C0C9","#D7D6CB"];
+				
+				var vis = new pv.Panel()
+					.width(w)
+					.height(h)
+					.bottom(90)
+					.left(32)
+					.right(10)
+					.top(15);
+				
+				var bar = vis.add(pv.Layout.Stack)
+					.layers(data)
+					.x(function() x(this.index))
+					.y(function(d) y(d))
+					.layer.add(pv.Bar)
+						.fillStyle(function() fill[this.parent.index])
+					.width(x.range().band)
+					.title(function(d) d+"%")
+					.event("mouseover", function() this.fillStyle("#555"))
+					.event("mouseout", function() this.fillStyle(fill[this.parent.index]));
+				
+				// 检查每一个柱形是否大于11%。如果大于，那么就在柱形的正中间绘制一个白色标签	
+				bar.anchor("center").add(pv.Label)
+					.visible(function(d) d>11)
+					.textStyle("white")
+					.text(function(d) d.toFixed(0));
+				
+				//倾斜45度显示水平类别标签
+				//这次只会向位于底部的柱形添加标签
+				bar.anchor("bottom").add(pv.Label)
+					.visible(function() !this.parent.index)
+					.textAlign("right")
+					.top(260)
+					.left(function() x(this.index)+20)
+					.textAngle(-Math.PI/4)
+					.text(function() cat[this.index]);
+				
+				//向垂直轴添加标签
+				vis.add(pv.Rule)
+					.data(y.ticks())  // 我们通过y.ticks()为图标添加标尺（Rule）,也就是刻度线
+					.bottom(y)
+					.left(-15)
+					.width(15)
+					.strokeStyle(function(d) d>0 ? "rgba(0,0,0,0.3)":"#000")
+					.anchor("top").add(pv.Label)
+					.bottom(function(d) y(d)+2)
+					.text(function(d) d==100 ? "100%": d.toFixed(0));
+					
+				//向水平轴添加另一个标尺
+				vis.add(pv.Rule)
+					.bottom(y)
+					.left(-15)
+					.right(0)
+					.strokeStyle("#000")
+				
+				vis.render();
+			</script>
+		</div>
+	</div>
+</body>
+</html>
