@@ -1,0 +1,44 @@
+<html>
+<head>
+	<title>Donut Chart</title>
+	<script type="text/javascript" src="protovis/protovis.js"></script>
+	<style type="text/css">
+		#figure{
+			width:  400px;
+			height: 400px;
+		}
+	</style>
+</head>
+<body>
+	<div id="figure">
+		<script type="text/javascript+protovis">
+			var data = [172,136,135,101,80,68,50,29,19,41];
+			var cats = ["统计学","设计","商务","制图学","信息科学","网站分析","编程","工程学","数学","其他"];
+			var w = 350,
+				h = 350,
+				r = w/2,
+				a = pv.Scale.linear(0,pv.sum(data)).range(0,2*Math.PI);
+			var depthColors = pv.Scale.linear(0,172).range("white","#821122");
+			var vis = new pv.Panel()
+				.width(w)
+				.height(h);
+			vis.add(pv.Wedge)
+				.data(data)
+				.bottom(w/2)
+				.left(w/2)
+				.innerRadius(r-120)
+				.outerRadius(r)
+				.fillStyle(function(d) depthColors(d))
+				.strokeStyle("#fff")
+				.angle(a)
+				.title(function(d) String(d) + "票")
+				.anchor("center").add(pv.Label)
+					.text(function(d) cats[this.index]);
+			vis.anchor("center").add(pv.Label)
+				.font("bold 14px Georgia")
+				.text("2009年5月");
+			vis.render();
+		</script>
+	</div>
+</body>
+</html>

@@ -1,0 +1,2 @@
+postage <- read.csv("http://datasets.flowingdata.com/us-postage.csv", sep=",", header = TRUE)
+plot(postage$Year, postage$Price, type="s", xlab="Year", ylab="Postage Rate(Dollars)", main="US Postage Rates for Letters, First Ounce, 1991-2010")
