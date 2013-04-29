@@ -1,0 +1,95 @@
+<html> 
+<head> 
+	<title>Stacked Bar Chart</title> 
+	<script type="text/javascript" src="protovis/protovis.js"></script>
+	<style type="text/css">
+	#figure-wrapper {
+		width: 400px;
+		margin: 50px auto;
+		font-family: Georgia;
+	}
+	#figure {
+		height: 300px;
+	}
+	h1 {
+		font-size: 18px;
+		text-transform: uppercase;
+		margin-bottom: 0px;
+	}
+	p {
+		font-size: 13px;
+		line-height: 1.4em;
+	}
+	</style>
+</head> 
+<body>
+	<div id="figure-wrapper">
+		<h1>Lorem Ipsum</h1>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eget libero ut ipsum mollis lobortis ut ut lectus.</p>
+		<div id="figure">
+	    <script type="text/javascript+protovis"> 
+
+	var data = pv.range(3).map(function() pv.range(10).map(Math.random)),
+	// var data = pv.range(10).map(function() pv.range(3).map(Math.random)),
+	    w = 400,
+	    h = 250,
+		x = pv.Scale.ordinal(pv.range(10)).splitBanded(0, w, 4/5),
+		y = pv.Scale.linear(0, 3).range(0, h);
+
+	var vis = new pv.Panel()
+	    .width(w)
+	    .height(h)
+	    .bottom(20)
+	    .left(15)
+	    .right(10)
+	    .top(15);
+
+	// Stacked layout 
+	var bar = vis.add(pv.Layout.Stack)
+	    .layers(data)
+	    .x(function() x(this.index))
+	    .y(function(d) y(d))
+	  .layer.add(pv.Bar)
+		.width(x.range().band);
+
+	// 
+	bar.anchor("center").add(pv.Label)
+		.visible(function(d) d > .2)
+		.textStyle("white")
+		.text(function(d) d.toFixed(1));
+
+	// Ticks
+	vis.add(pv.Rule)
+		.data(y.ticks())
+		.bottom(y)
+		.left(-15)
+		.width(15)
+		.strokeStyle(function(d) d > 0 ? "rgba(0,0,0,0.3)" : "")
+	  .anchor("top").add(pv.Label)
+		.text(function(d) d.toFixed(1));
+
+	vis.add(pv.Rule)
+		.bottom(0)
+		.left(-15)
+		.right(0)
+		.strokeStyle("#000")
+
+	// vis.add(pv.Rule)
+	//     .data(y.ticks())
+	//     .bottom(y)
+	//     .strokeStyle(function(d) d ? "rgba(255,255,255,0.2)" : "#000")
+	// 	.strokeStyle(function(d) d ? "" : "#000")
+	//   .add(pv.Rule)
+	//     .left(-5)
+	//     .width(5)
+	//     .strokeStyle("#000")
+	//   .anchor("left").add(pv.Label)
+	// 	.text(function(d) d.toFixed(1));
+
+	vis.render();
+
+	    </script>
+		</div><!-- @end figure -->
+	</div><!-- @end figure-wrapper -->
+</body> 
+</html>
